@@ -12,6 +12,18 @@
   --color-line: #dce3e8;
   --color-warning: #b45309;
   --color-danger: #b91c1c;
+  --color-muted: #5b6573; /* secondary text: 5.9:1 on white */
+  --color-line-strong: #868f9c; /* input underlines: 3.3:1 on white */
+  --tracking-label: 0.2em;
+  --tracking-heading: 0.25em;
+}
+
+/* Visible keyboard focus (instead of hiding the outline). */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 4px;
+  }
 }
 
 body {

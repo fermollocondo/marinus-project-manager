@@ -5,10 +5,10 @@ export default function Field({ label, name, as = 'input', className = '', child
   const Tag = as
   return (
     <label className={`flex flex-col gap-2 ${className}`}>
-      <span className="text-[11px] tracking-[0.2em] text-gray-500 uppercase">{label}</span>
+      <span className="text-xs tracking-label text-muted uppercase">{label}</span>
       <Tag
         name={name}
-        className="rounded-none border-0 border-b border-line bg-transparent px-0 py-2 text-base placeholder:text-gray-300 focus:border-ink focus:outline-none"
+        className="rounded-none border-0 border-b border-line-strong bg-transparent px-0 py-2 text-base placeholder:text-muted focus:border-ink focus-ring"
         {...props}
       >
         {children}

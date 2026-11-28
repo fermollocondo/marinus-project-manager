@@ -11,8 +11,8 @@ import Field from '../components/Field.jsx'
 function Section({ number, title, children }) {
   return (
     <section className="border-t border-ink pt-6">
-      <h2 className="mb-8 flex items-baseline gap-4 text-xs font-bold tracking-[0.25em] uppercase">
-        <span className="text-gray-400">{number}</span>
+      <h2 className="mb-8 flex items-baseline gap-4 text-xs font-bold tracking-heading uppercase">
+        <span className="text-muted">{number}</span>
         {title}
       </h2>
       {children}
@@ -49,7 +49,7 @@ export default function IntakePage() {
     <form className="flex flex-col gap-16" onSubmit={(e) => e.preventDefault()}>
       <header>
         <h1 className="text-4xl font-light tracking-tight sm:text-5xl">New job intake</h1>
-        <p className="mt-3 text-sm text-gray-500">Capture the site, the rooms and the finish.</p>
+        <p className="mt-3 text-sm text-muted">Capture the site, the rooms and the finish.</p>
       </header>
 
       <Section number="01" title="Customer">
@@ -99,7 +99,7 @@ export default function IntakePage() {
                   <button
                     type="button"
                     onClick={() => removeArea(areaIndex)}
-                    className="pb-2 text-[11px] tracking-[0.2em] text-gray-500 uppercase hover:text-danger"
+                    className="focus-ring inline-flex min-h-11 items-center px-2 text-xs tracking-label text-muted uppercase hover:text-danger"
                   >
                     Remove
                   </button>
@@ -111,7 +111,7 @@ export default function IntakePage() {
                   key={itemIndex}
                   className="mt-8 grid gap-x-8 gap-y-6 border-l border-line pl-5 sm:grid-cols-2 sm:pl-8"
                 >
-                  <legend className="mb-4 text-[11px] tracking-[0.2em] text-gray-400 uppercase">
+                  <legend className="mb-4 text-xs tracking-label text-muted uppercase">
                     Scope item {itemIndex + 1}
                   </legend>
                   <Field
@@ -132,7 +132,7 @@ export default function IntakePage() {
                     <option value="gloss">Gloss</option>
                   </Field>
                   <Field label="Dimensions" name="dimensions" placeholder="e.g. 12 x 14 ft" />
-                  <label className="flex items-center gap-3 text-sm sm:self-end sm:pb-2">
+                  <label className="flex min-h-11 items-center gap-3 text-sm sm:self-end">
                     <input
                       type="checkbox"
                       name="included"
@@ -147,7 +147,7 @@ export default function IntakePage() {
               <button
                 type="button"
                 onClick={() => addScopeItem(areaIndex)}
-                className="mt-6 ml-5 text-[11px] tracking-[0.2em] uppercase underline-offset-4 hover:underline sm:ml-8"
+                className="focus-ring mt-4 ml-5 inline-flex min-h-11 items-center text-xs tracking-label uppercase underline-offset-4 hover:underline sm:ml-8"
               >
                 + Add scope item
               </button>
@@ -157,7 +157,7 @@ export default function IntakePage() {
           <button
             type="button"
             onClick={addArea}
-            className="border border-ink px-4 py-4 text-[11px] tracking-[0.25em] uppercase transition-colors hover:bg-ink hover:text-white"
+            className="focus-ring min-h-11 border border-ink px-4 py-4 text-xs tracking-heading uppercase transition-colors hover:bg-ink hover:text-white"
           >
             + Add area
           </button>
@@ -167,7 +167,7 @@ export default function IntakePage() {
       {/* Full-width button on phones, normal size on desktop */}
       <button
         type="submit"
-        className="w-full bg-ink px-10 py-4 text-xs tracking-[0.25em] text-white uppercase transition-opacity hover:opacity-80 sm:w-auto sm:self-end"
+        className="focus-ring min-h-11 w-full bg-ink px-10 py-4 text-xs tracking-heading text-white uppercase transition-opacity hover:opacity-80 sm:w-auto sm:self-end"
       >
         Save intake
       </button>

@@ -7,8 +7,8 @@ export default function AppShell({ title, children }) {
     <div className="flex min-h-dvh flex-col bg-white">
       <header className="sticky top-0 z-10 border-b border-ink bg-white">
         <div className="mx-auto flex max-w-3xl items-baseline justify-between px-5 py-5 sm:px-8">
-          <span className="text-sm font-bold tracking-[0.25em] uppercase">Marinus</span>
-          <span className="text-xs tracking-[0.2em] text-gray-500 uppercase">{title}</span>
+          <span className="text-sm font-bold tracking-heading uppercase">Marinus</span>
+          <span className="text-xs tracking-label text-muted uppercase">{title}</span>
         </div>
       </header>
 
