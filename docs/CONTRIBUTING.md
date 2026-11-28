@@ -38,6 +38,7 @@ npm run lint && npm run format:check && npm run build
 - No hard-coded UI text: add keys to both the English and Spanish translation files.
 - Mobile-first Tailwind; use the shared color names from `src/index.css`.
 - File names: `PascalCase.jsx` for components/pages, `camelCase.js` for everything else.
+- Full frontend conventions (components, tokens, breakpoints, field names): see `docs/frontend-conventions.md`.
 
 **API field names** use `snake_case` on both sides (e.g. `estimate_due_date`), exactly as shown in `/api/docs`.
 
@@ -45,4 +46,3 @@ npm run lint && npm run format:check && npm run build
 
 - Never commit `.env`, real customer data, photos, or credentials.
 - Use made-up data in tests, fixtures and screenshots.
-- Full frontend conventions (components, tokens, breakpoints, field names): see `docs/frontend-conventions.md`.
