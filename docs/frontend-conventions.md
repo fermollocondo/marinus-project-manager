@@ -1,118 +1,135 @@
 # Frontend Conventions
 
-**Ticket:** SCRUM-24 · **Owner:** Fernanda · **Status:** Draft v0.1 — review with the team
+**Ticket:** SCRUM-24 · **Owner:** Fernanda · **Status:** Draft v0.2 — for team review
 
-These rules keep every screen consistent and let anyone build a new one without asking. They apply to today's HTML + Tailwind pages and to React components once we migrate. If a rule here conflicts with what you need, change the rule in a pull request instead of working around it.
+These conventions apply to the React app in `frontend/` (React + Vite + Tailwind v4, JavaScript). They add detail to what `docs/ARCHITECTURE.md` and `docs/CONTRIBUTING.md` already say; they do not replace them. If this file disagrees with those two, they win and this file gets fixed.
+
+> **Drafting note:** a first draft of this file was written with AI assistance and then checked against `ARCHITECTURE.md`, `CONTRIBUTING.md`, `DATA_MODEL.md`, `frontend/package.json` and `frontend/src/index.css`.
 
 ---
 
-## 1. Components
+## 1. Project layout
 
-- **One component per file.** File and component names use `PascalCase` (`EstimateTable.jsx`). Plain HTML pages use `kebab-case` (`job-intake.html`).
-- **Group by role, not by page:**
-  - `components/` reusable pieces (Button, Field, Card, Table)
-  - `pages/` one file per screen, mostly composition
-  - `i18n/` language files (see SCRUM-26)
-- **Build it once, reuse it.** If a button, field, or card appears on a second page, move it to `components/`. Do not copy and paste markup.
-- **Small and predictable.** A component takes data through props and does one job. If it grows past about 150 lines, split it.
-- **No hard-coded visible text.** Every label, button, message, and placeholder comes from the language files so English and Spanish both work.
-- **No hard-coded money logic in the UI.** Store amounts as integer cents. Format only at display time with `Intl.NumberFormat`.
-- **Names describe purpose:** `ApproveEstimateButton`, not `Button2`.
-
-## 2. Design tokens
-
-A token is a named value (color, spacing, font) defined once. **Nobody writes a raw hex color, pixel size, or font name in a page or component.** Use the token.
-
-Tokens live in `src/input.css` using Tailwind v4's `@theme`:
-
-```css
-@import "tailwindcss";
-
-@theme {
-  /* Colors — semantic names, not literal ones */
-  --color-surface: #FFFFFF;       /* page background */
-  --color-surface-alt: #F1F5F9;   /* cards, table stripes */
-  --color-ink: #1E293B;           /* body text */
-  --color-ink-muted: #64748B;     /* secondary text */
-  --color-line: #CBD5E1;          /* borders, dividers */
-  --color-brand: #1F3B34;         /* primary buttons, links */
-  --color-brand-ink: #F8FAFC;     /* text on brand */
-  --color-danger: #B91C1C;
-  --color-success: #15803D;
-
-  /* Type */
-  --font-body: "Inter", system-ui, sans-serif;
-  --font-display: "Inter", system-ui, sans-serif;
-
-  /* Radius */
-  --radius-control: 0.375rem;
-}
+```
+frontend/src/
+  api/          all backend calls (client.js)
+  components/   reusable pieces (AppShell.jsx, Field.jsx, ...)
+  pages/        one file per screen (IntakePage.jsx, ...)
+  index.css     Tailwind setup and shared design tokens
+  main.jsx, App.jsx
 ```
 
-> **TO CONFIRM:** the values above are proposed placeholders based on the current slate look. Agree on the real palette and fonts with Ivan (PO) and update this block. The **names** are what matter.
+- **File names** (from CONTRIBUTING): `PascalCase.jsx` for components and pages, `camelCase.js` for everything else.
+- **Backend calls live in `src/api/` only.** No `fetch` calls inside components. Non-GET requests send Django's CSRF token (`X-CSRFToken`).
+- **Reuse before creating.** Check `components/` first (for example `Field.jsx` for form inputs) before writing a new input, button, or layout piece. If something appears on a second page, move it to `components/`.
+- **Pages compose, components do one job.** A component takes props and does one thing. If it passes about 150 lines, split it.
+- **Name by purpose:** `ApproveEstimateButton`, not `Button2`.
 
-**Spacing:** use Tailwind's scale (`p-4`, `gap-6`). Do not invent pixel values like `p-[13px]`.
+## 2. Libraries (already agreed — do not add alternatives)
 
-**Dark mode:** not in scope for MVP. If added later, redefine the same tokens, not the components.
+| Need | Use |
+|------|-----|
+| Routing | react-router |
+| Server data | @tanstack/react-query |
+| Forms and validation | react-hook-form + zod |
+| English / Spanish | i18next + react-i18next |
+| Styling | Tailwind v4 |
 
-## 3. Breakpoints
+Adding a new library, framework, or icon set needs team agreement first (see `AI_GUIDELINES.md`, rule 4).
 
-We design **mobile first**: write the phone layout first, then add rules for larger screens with `sm:`, `md:`, `lg:`.
+## 3. Design tokens
 
-| Name | Min width | Typical device | What changes |
-|------|-----------|----------------|--------------|
-| (base) | 0 | Phone, 320–639 px | Single column, stacked fields, full-width buttons |
-| `sm` | 640 px | Large phone / small tablet | Two-column forms where useful |
-| `md` | 768 px | Tablet | Side-by-side summary and details |
-| `lg` | 1024 px | Laptop | Full table layouts, sidebars |
+Tokens are defined once in `frontend/src/index.css` under `@theme`. **Use them as Tailwind classes. Do not write raw hex colors or one-off font names.**
 
-These are Tailwind's defaults. Do not redefine them without team agreement.
+| Token | Class examples | Use |
+|-------|----------------|-----|
+| `--color-brand` | `bg-brand`, `text-brand` | Primary buttons, links, key accents |
+| `--color-brand-dark` | `bg-brand-dark` | Hover / pressed state of brand |
+| `--color-brand-light` | `bg-brand-light` | Subtle highlights, selected rows |
+| `--color-ink` | `text-ink` | Body text |
+| `--color-surface` | `bg-surface` | Page background |
+| `--color-line` | `border-line` | Borders and dividers |
+| `--color-warning` | `text-warning` | Cautions |
+| `--color-danger` | `text-danger` | Errors, destructive actions |
+| `--font-sans` | (default) | All text |
 
-**Smallest supported width: 320 px.** Nothing may need horizontal scrolling of the whole page at that width.
+**Spacing and sizing:** use Tailwind's scale (`p-4`, `gap-6`). No arbitrary values like `p-[13px]` unless there is a documented reason.
 
-## 4. Quality rules (every screen)
+**Adding a token:** change `index.css` in a PR and tell the team. Never create a parallel set of colors in another file.
+
+**Missing tokens to propose (not added yet):** a muted/secondary text color, a success color, and a visible focus-ring color. Until they exist, use the closest existing token and leave a comment.
+
+## 4. Breakpoints
+
+Mobile first (from ARCHITECTURE): write the phone layout first, then add changes with `sm:`, `md:`, `lg:`.
+
+| Prefix | Min width | What usually changes |
+|--------|-----------|----------------------|
+| (none) | 0 | Single column, stacked fields, full-width primary button |
+| `sm:` | 640 px | Two-column forms where useful |
+| `md:` | 768 px | Side-by-side summary and details |
+| `lg:` | 1024 px | Full tables, sidebars |
+
+These are Tailwind's defaults. **Smallest supported width: 320 px**, with no whole-page horizontal scroll.
+
+## 5. Text, language, and data
+
+- **No hard-coded UI text.** Add keys to both the English and the Spanish translation files (CONTRIBUTING). Spanish runs about 20–30% longer, so do not fix widths on buttons or labels.
+- **Money:** the backend stores money as `DecimalField` and calculates `line_total = unit_price × quantity` (DATA_MODEL). In the UI:
+  - Show the totals the server returns; do not make the browser the source of truth for money.
+  - Do not do money arithmetic with floating-point numbers in the UI.
+  - Format only for display with `Intl.NumberFormat`.
+  - *Open question:* confirm in `/api/docs` whether decimals arrive as strings or numbers, and document it here.
+- **API field names** are `snake_case` on both sides, exactly as shown in `/api/docs` (CONTRIBUTING). Do not invent field names; compare with `docs/DATA_MODEL.md`.
+- **Dates:** format with `Intl.DateTimeFormat` using the active language.
+
+## 6. Quality rules for every screen
 
 **Touch and input**
-- Buttons and tap targets are at least **44 × 44 px**, with space between neighbors.
-- Text inputs use **16 px or larger** (smaller makes iPhones zoom the page on focus).
-- Use the right input type and `inputmode` (`type="email"`, `inputmode="decimal"` for money and quantities).
-- Every field has a visible `<label>`. A placeholder is not a label.
+- Buttons and tap targets at least **44 × 44 px**, with space between neighbors.
+- Text inputs **16 px or larger** (smaller makes iPhones zoom the page when a field gets focus).
+- Right input type and `inputmode` (`email`, `tel`, `decimal`).
+- Every field has a visible `<label>`; a placeholder is not a label.
 
 **Layout**
-- No whole-page horizontal scroll. Wide tables scroll **inside** their own container (`overflow-x-auto`).
-- Leave room for translated text: Spanish runs about 20–30% longer than English. Do not fix widths on buttons or labels.
+- Wide tables scroll inside their own container (`overflow-x-auto`), not the whole page.
 - Images and media use `max-w-full`.
-- Respect device safe areas (notches, home bar) on full-bleed layouts.
+- Respect device safe areas on full-bleed layouts.
 
 **Accessibility**
-- Text contrast of at least 4.5:1 against its background.
-- Visible keyboard focus on every interactive element. Never remove the outline without replacing it.
-- Use real elements: `<button>` for actions, `<a>` for navigation, headings in order (`h1` → `h2` → `h3`).
+- Text contrast at least 4.5:1.
+- Keyboard focus is always visible. Do not use `outline-none` without a replacement focus style (for example `focus-visible:ring-2`).
+- Real elements: `<button>` for actions, `<a>` for navigation, headings in order.
 - Set `<html lang>` to the active language.
-- Status is never shown by color alone (add text or an icon).
+- Never show status with color alone (add text or an icon).
 
 **Safety**
-- Never insert user-typed text as raw HTML. Render it as text or escape it.
-- Documents that are approved or signed are **read-only in the UI** (use `disabled`/`readonly`, not only CSS) and the server must also reject edits.
+- Never inject user-typed text as raw HTML; let React render it as text.
+- Approved or signed documents are **read-only in the UI** (`disabled` / `readOnly`, not only CSS). Permissions are enforced on the server; the UI only reflects them (`AI_GUIDELINES.md`, rule 5).
 
-## 5. Pull request checklist
+## 7. Pull request checklist
 
-Before requesting review:
+Follows CONTRIBUTING's workflow. Before opening a PR:
 
-- [ ] No raw colors, fonts, or one-off pixel sizes — tokens only
-- [ ] No hard-coded visible text — language files only
+- [ ] Branch name follows `feature/W3-123-short-name`
+- [ ] `cd frontend && npm run lint && npm run format:check && npm run build` passes
+- [ ] Tokens and shared components used; no raw colors or hard-coded text
+- [ ] Both English and Spanish keys added
 - [ ] Checked at 320, 390, and 768 px (see `mobile-testing-checklist.md`)
 - [ ] Works with the keyboard alone
-- [ ] No new console errors
-- [ ] Ticket key in branch name and PR title (e.g. `SCRUM-24-frontend-conventions`)
+- [ ] PR description includes: what changed, migration notes (if any), **screenshots on phone and desktop**, tests, and how it was verified
+- [ ] Screenshots and test data are **made up**; no real customer names, addresses, phones, or photos
+- [ ] Approval from someone other than the author (money, login, and permissions changes need a backend reviewer)
+- [ ] AI-assisted code is explained in the PR and the author can explain every line
 
-## 6. Open questions
+## 8. Open questions
 
-- Final palette and fonts (needs PO decision)
-- Do we ship React components or stay with static HTML for MVP? (affects section 1)
-- Icon set to use, if any
+- Do we add the missing tokens (muted text, success, focus ring)? Who owns `index.css`?
+- How do decimal amounts arrive from the API (string or number)?
+- Icon set, if any (needs team agreement).
+- Are the root-level HTML pages (`job-intake.html`, etc.) early mockups to be retired? (Assumption — confirm with Brad.)
 
 ---
 
-*Change log:* v0.1 — initial draft.
+*Change log:* v0.2 — aligned with ARCHITECTURE, CONTRIBUTING, DATA_MODEL, `index.css` and `package.json`. v0.1 — initial draft.
 
