@@ -45,3 +45,4 @@ npm run lint && npm run format:check && npm run build
 
 - Never commit `.env`, real customer data, photos, or credentials.
 - Use made-up data in tests, fixtures and screenshots.
+- Full frontend conventions (components, tokens, breakpoints, field names): see `docs/frontend-conventions.md`.
